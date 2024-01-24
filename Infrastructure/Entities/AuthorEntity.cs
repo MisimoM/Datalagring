@@ -8,8 +8,9 @@ namespace Infrastructure.Entities
     {
         [Key]
         public int Id { get; set; }
+        
         [Required]
-        [StringLength(200)]
+        [StringLength(100)]
         public string Name { get; set; } = null!;
 
         public virtual ICollection<BookEntity> Books { get; set; } = new List<BookEntity>();

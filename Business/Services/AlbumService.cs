@@ -1,10 +1,6 @@
-﻿
-using Infrastructure.Entities;
-using Infrastructure.Interfaces;
-
-namespace Infrastructure.Services
+﻿namespace Business.Services
 {
-    public class AlbumService : IProductService<AlbumEntity>
+    public class AlbumService
     {
         public bool AddEntity(object newEntity)
         {

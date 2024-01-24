@@ -7,9 +7,11 @@ namespace Infrastructure.Entities
     {
         [Key]
         public int Id { get; set; }
+        
         [Required]
-        [StringLength(200)]
+        [StringLength(100)]
         public string Title { get; set; } = null!;
+        
         [Required]
         [Column(TypeName = "money")]
         public decimal Price { get; set; }

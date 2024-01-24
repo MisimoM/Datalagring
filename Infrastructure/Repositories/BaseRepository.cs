@@ -1,36 +1,106 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories
 {
-    public class BaseRepository<TEntity>(DbContext dbContext) where TEntity : class
+    public abstract class BaseRepository<TEntity> where TEntity : class
     {
-        private readonly DbContext _dbContext = dbContext;
+        protected readonly DataContext _dbContext;
 
-        public void Add(TEntity entity)
+        protected BaseRepository(DataContext dbContext)
         {
-            _dbContext.Set<TEntity>().Add(entity);
-            _dbContext.SaveChanges();
+            _dbContext = dbContext;
         }
 
-        public void Delete(int id)
+        public virtual async Task<TEntity> AddAsync(TEntity entity)
         {
-            var entity = _dbContext.Set<TEntity>().Find(id);
-            if (entity != null)
+            try
             {
-                _dbContext.Set<TEntity>().Remove(entity);
-                _dbContext.SaveChanges();
+                _dbContext.Set<TEntity>().Add(entity);
+                var result = await _dbContext.SaveChangesAsync();
+
+                if (result > 0)
+                    return entity;
             }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return null!;
         }
 
-        public void Update(TEntity entity)
+        public virtual async Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+            try
+            {
+                var entity = await _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+                if (entity != null)
+                {
+                    _dbContext.Set<TEntity>().Remove(entity);
+                    var result = await _dbContext.SaveChangesAsync();
+
+                    return result > 0;
+                }
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return false;
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public virtual async Task<TEntity> UpdateAsync(Expression<Func<TEntity, bool>> predicate, TEntity updatedEntity)
         {
-            return _dbContext.Set<TEntity>().ToList();
+            try
+            {
+                var entity = await _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+                if (entity != null)
+                {
+                    _dbContext.Entry(entity).CurrentValues.SetValues(updatedEntity);
+                    var result = await _dbContext.SaveChangesAsync();
+
+                    if (result > 0)
+                        return updatedEntity;
+                }
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return null!;
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            try
+            {
+                var entities = await _dbContext.Set<TEntity>().ToListAsync();
+                if (entities != null)
+                {
+                    return entities;
+                }
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return null!;
+        }
+
+        public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                var found = await _dbContext.Set<TEntity>().AnyAsync(predicate);
+                return found;
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return false!;
+        }
+
+        public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                var entity = await _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+                if (entity != null)
+                {
+                    return entity;
+                }
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return null!;
         }
     }
+
 }

@@ -1,10 +1,9 @@
-﻿
+﻿using Infrastructure.Contexts;
 using Infrastructure.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class AuthorRepository(DbContext dbContext) : BaseRepository<AuthorEntity>(dbContext)
+    public class AuthorRepository(DataContext dbContext) : BaseRepository<AuthorEntity>(dbContext)
     {
     }
 }
