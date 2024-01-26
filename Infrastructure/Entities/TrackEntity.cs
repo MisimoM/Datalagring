@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Entities
 {
@@ -13,9 +12,8 @@ namespace Infrastructure.Entities
         public string Title { get; set; } = null!;
         
         [Required]
-        [ForeignKey(nameof(AlbumEntity))]
-        public int AlbumID { get; set; }
+        public int AlbumId { get; set; }
 
-        public virtual AlbumEntity Album { get; set; } = new AlbumEntity();
+        public virtual AlbumEntity Album { get; set; } = null!;
     }
 }

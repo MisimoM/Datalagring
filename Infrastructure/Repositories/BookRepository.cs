@@ -11,7 +11,6 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                // Eager loading of Author and Genre entities
                 var entities = await _dbContext.Set<BookEntity>()
                     .Include(book => book.Author)
                     .Include(book => book.Genre)

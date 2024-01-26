@@ -8,11 +8,18 @@ using Microsoft.Extensions.Hosting;
 
 var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
 {
-    services.AddDbContext<DataContext>(x => x.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Marko\Desktop\Projects\Education\DataBase\Uppgift-Databaser\Infrastructure\Data\local_database.mdf;Integrated Security=True;Connect Timeout=30;Encrypt=True"));
+    services.AddDbContext<DataContext>(x => x.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Marko\Desktop\Projects\Education\DataBase\Uppgift-Databaser\Infrastructure\Data\local_database.mdf;Integrated Security=True;Connect Timeout=30"));
+    
     services.AddScoped<BookRepository>();
     services.AddScoped<AuthorRepository>();
     services.AddScoped<GenreRepository>();
     services.AddScoped<BookService>();
+
+    services.AddScoped<ArtistRepository>();
+    services.AddScoped<AlbumRepository>();
+    services.AddScoped<TrackRepository>();
+    services.AddScoped<AlbumService>();
+
     services.AddScoped<MenuService>();
 
 }).Build();

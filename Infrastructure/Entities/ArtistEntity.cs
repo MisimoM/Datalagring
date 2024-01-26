@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Entities
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class ArtistEntity
     {
         [Key]
@@ -9,7 +11,7 @@ namespace Infrastructure.Entities
 
         [Required]
         [StringLength(100)]
-        public string ArtistName { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
         public virtual ICollection<AlbumEntity> Albums { get; set; } = new List<AlbumEntity>();
     }

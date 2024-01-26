@@ -12,5 +12,15 @@ namespace Infrastructure.Contexts
         public virtual DbSet<AlbumEntity> Albums { get; set; }
         public virtual DbSet<ArtistEntity> Artists { get; set; }
         public virtual DbSet<TrackEntity> Tracks { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AlbumEntity>()
+                .HasMany(al => al.Tracks)
+                .WithOne(t => t.Album)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
+
+
 }

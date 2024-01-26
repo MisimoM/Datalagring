@@ -36,6 +36,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("money");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -45,7 +48,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ArtistEntityId");
 
-                    b.ToTable("Albums");
+                    b.ToTable("Albums", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.ArtistEntity", b =>
@@ -56,14 +59,17 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ArtistName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Artists");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Artists", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.AuthorEntity", b =>
@@ -84,7 +90,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.BookEntity", b =>
@@ -115,7 +121,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.GenreEntity", b =>
@@ -136,7 +142,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.TrackEntity", b =>
@@ -147,7 +153,7 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AlbumID")
+                    b.Property<int>("AlbumId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -157,9 +163,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlbumID");
+                    b.HasIndex("AlbumId");
 
-                    b.ToTable("Tracks");
+                    b.ToTable("Tracks", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.AlbumEntity", b =>
@@ -192,7 +198,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Infrastructure.Entities.AlbumEntity", "Album")
                         .WithMany("Tracks")
-                        .HasForeignKey("AlbumID")
+                        .HasForeignKey("AlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

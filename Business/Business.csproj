@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Factories\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>
 

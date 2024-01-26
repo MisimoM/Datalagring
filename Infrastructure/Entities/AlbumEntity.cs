@@ -13,11 +13,12 @@ namespace Infrastructure.Entities
         public string Title { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(ArtistEntity))]
+        [Column(TypeName = "money")]
+        public decimal Price { get; set; }
+
+        [Required]
         public int ArtistId { get; set; }
-
-
+        public virtual ArtistEntity Artist { get; set; } = null!;
         public virtual ICollection<TrackEntity> Tracks { get; set; } = new List<TrackEntity>();
-
     }
 }

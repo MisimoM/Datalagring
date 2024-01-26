@@ -9,8 +9,7 @@
             Console.WriteLine("");
             Console.WriteLine("1. Show Books");
             Console.WriteLine("2. Show Albums");
-
-            
+            Console.WriteLine("3. Exit the shop");
         }
     }
 }

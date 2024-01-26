@@ -17,12 +17,10 @@ namespace Infrastructure.Entities
         public decimal Price { get; set; }
 
         [Required]
-        [ForeignKey(nameof(AuthorEntity))]
         public int AuthorId { get; set; }
         public virtual AuthorEntity Author { get; set; } = null!;
 
         [Required]
-        [ForeignKey(nameof(GenreEntity))]
         public int GenreId { get; set; }
 
         public virtual GenreEntity Genre { get; set;} = null!;
