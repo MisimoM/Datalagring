@@ -1,6 +1,6 @@
-﻿using Infrastructure.Entities;
-using Infrastructure.Repositories;
-using Shared.Models;
+﻿using Infrastructure.Entities.Book;
+using Infrastructure.Repositories.Book;
+using Shared.Models.Book;
 using System.Diagnostics;
 
 namespace Business.Services

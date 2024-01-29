@@ -1,7 +1,6 @@
-﻿using Infrastructure.Entities;
-using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Shared.Models;
+﻿using Infrastructure.Entities.Album;
+using Infrastructure.Repositories.Album;
+using Shared.Models.Album;
 using System.Diagnostics;
 
 namespace Business.Services
@@ -84,6 +83,49 @@ namespace Business.Services
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
 
             return false;
+        }
+
+        public async Task<AlbumEntity> UpdateAlbumAsync(int albumId, AlbumModel updatedAlbumModel, List<TrackModel> updatedTrackModels)
+        {
+            try
+            {
+                var existingAlbumEntity = await _albumRepository.GetAsync(album => album.Id == albumId);
+
+                if (existingAlbumEntity != null)
+                {
+                    existingAlbumEntity.Title = updatedAlbumModel.Title;
+                    existingAlbumEntity.Price = updatedAlbumModel.Price;
+
+                    var artistEntity = await _artistRepository.GetAsync(artist => artist.Name == updatedAlbumModel.Artist) ??
+                                       await _artistRepository.AddAsync(new ArtistEntity { Name = updatedAlbumModel.Artist });
+
+                    existingAlbumEntity.Artist = artistEntity;
+
+                    var updatedAlbumEntity = await _albumRepository.UpdateAsync(album => album.Id == albumId, existingAlbumEntity);
+
+                    existingAlbumEntity.Tracks.Clear();
+
+                    foreach (var updatedTrackModel in updatedTrackModels)
+                    {
+                        var newTrackEntity = new TrackEntity
+                        {
+                            Title = updatedTrackModel.Title,
+                            AlbumId = existingAlbumEntity.Id
+                        };
+
+                        await _trackRepository.AddAsync(newTrackEntity);
+                        updatedAlbumEntity.Tracks.Add(newTrackEntity);
+                    }
+
+                    return await _albumRepository.UpdateAsync(album => album.Id == albumId, updatedAlbumEntity);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return null!;
         }
     }
 }

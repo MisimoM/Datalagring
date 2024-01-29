@@ -1,13 +1,16 @@
 ﻿using Presentation.Views;
 using Business.Services;
-using Shared.Models;
+using Shared.Models.Album;
+using Shared.Models.Book;
+using Shared.Models.Product;
 
 namespace Presentation.Services
 {
-    public class MenuService(BookService bookService, AlbumService albumService)
+    public class MenuService(BookService bookService, AlbumService albumService, ProductService productService)
     {
         private readonly BookService _bookService = bookService;
         private readonly AlbumService _albumService = albumService;
+        private readonly ProductService _productService = productService;
 
         public async Task ShowMainMenu()
         {
@@ -25,6 +28,9 @@ namespace Presentation.Services
                     await ShowAlbumsMenu();
                     break;
                 case "3":
+                    await ShowProductsMenu();
+                    break;
+                case "4":
                     Console.WriteLine("Exiting the shop...");
                     Environment.Exit(0);
                     break;
@@ -225,9 +231,9 @@ namespace Presentation.Services
                 {
                     var albums = await _albumService.GetAlbumsAsync();
 
+                    Console.Clear();
                     if (!albums.Any())
                     {
-                        Console.Clear();
                         Console.WriteLine("No albums available.");
                     }
 
@@ -255,7 +261,7 @@ namespace Presentation.Services
                             await AddAlbum();
                             break;
                         case "2":
-                            //await UpdateAlbum();
+                            await UpdateAlbum();
                             break;
                         case "3":
                             await RemoveAlbum();
@@ -357,6 +363,232 @@ namespace Presentation.Services
             }
 
 
+        }
+
+        private async Task UpdateAlbum()
+        {
+            Console.WriteLine("Enter the ID of the album you want to update");
+            Console.Write("ID number: ");
+
+            if (int.TryParse(Console.ReadLine(), out int albumId))
+            {
+                Console.WriteLine("Enter updated details for the album:");
+
+                Console.Write("New Title: ");
+                var newTitle = Console.ReadLine();
+
+                Console.Write("New Artist: ");
+                var newArtist = Console.ReadLine();
+
+                Console.Write("New Price: ");
+                if (!decimal.TryParse(Console.ReadLine(), out var newPrice) || newPrice < 0)
+                {
+                    Console.WriteLine("Invalid price format. Please enter a valid positive number.");
+                    return;
+                }
+
+                Console.WriteLine("Enter details for the new tracks (press Enter to finish):");
+                var updatedTrackModels = new List<TrackModel>();
+
+                while (true)
+                {
+                    Console.Write("Track Title (press Enter to finish): ");
+                    var trackTitle = Console.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(trackTitle))
+                        break;
+
+                    updatedTrackModels.Add(new TrackModel { Title = trackTitle! });
+                }
+
+                var updatedAlbumModel = new AlbumModel
+                {
+                    Title = newTitle!,
+                    Artist = newArtist!,
+                    Price = newPrice,
+                };
+
+                var updatedAlbumEntity = await _albumService.UpdateAlbumAsync(albumId, updatedAlbumModel, updatedTrackModels);
+
+                if (updatedAlbumEntity != null)
+                {
+                    Console.WriteLine($"Album with ID {albumId} successfully updated.");
+                }
+                else
+                {
+                    Console.WriteLine($"Unable to update album with ID {albumId}.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a valid numeric ID.");
+            }
+        }
+
+        private async Task ShowProductsMenu()
+        {
+            while (true)
+            {
+                Console.WriteLine("Showing Products");
+                try
+                {
+                    var products = await _productService.GetProductsAsync();
+
+                    if (!products.Any())
+                    {
+                        Console.Clear();
+                        Console.WriteLine("No products available.");
+                    }
+
+                    foreach (var product in products)
+                    {
+                        Console.WriteLine($"Id: {product.Id}, Category: {product.Category} Name: {product.Name}, Price: ${product.Price:F0}, Manufacturer: {product.Manufacturer}");
+                    }
+
+                    Console.WriteLine("Options:");
+                    Console.WriteLine("1. Add Product");
+                    Console.WriteLine("2. Edit Product");
+                    Console.WriteLine("3. Remove Product");
+                    Console.WriteLine("4. Go back to Main Menu");
+
+                    var option = Console.ReadLine();
+
+                    switch (option)
+                    {
+                        case "1":
+                            await AddProduct();
+                            break;
+                        case "2":
+                            await UpdateProduct();
+                            break;
+                        case "3":
+                            await RemoveProduct();
+                            break;
+                        case "4":
+                            await ShowMainMenu();
+                            break;
+                        default:
+                            Console.WriteLine("Invalid option");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
+        }
+        private async Task AddProduct()
+        {
+            try
+            {
+                Console.WriteLine("Enter details for the new product:");
+
+                Console.Write("Name: ");
+                var name = Console.ReadLine();
+
+                Console.Write("Manufacturer: ");
+                var manufacturer = Console.ReadLine();
+
+                Console.Write("Price: ");
+                if (!decimal.TryParse(Console.ReadLine(), out var price))
+                {
+                    Console.WriteLine("Invalid price format.");
+                    return;
+                }
+
+                Console.Write("Category: ");
+                var category = Console.ReadLine();
+
+                var newProductModel = new ProductModel
+                {
+                    Name = name!,
+                    Manufacturer = manufacturer!,
+                    Price = price,
+                    Category = category!
+                };
+
+                await _productService.CreateProductAsync(newProductModel);
+
+                Console.WriteLine("New product added successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        private async Task RemoveProduct()
+        {
+            Console.WriteLine("Enter the ID of the product you want to remove");
+            Console.Write("ID number: ");
+
+            if (int.TryParse(Console.ReadLine(), out int input))
+            {
+                bool removed = await _productService.RemoveProductAsync(input);
+
+                if (removed)
+                {
+                    Console.WriteLine($"Product with ID {input} successfully removed.");
+                }
+                else
+                {
+                    Console.WriteLine($"Unable to remove product with ID {input}.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a valid numeric ID.");
+            }
+        }
+        private async Task UpdateProduct()
+        {
+            Console.WriteLine("Enter the ID of the product you want to update");
+            Console.Write("ID number: ");
+
+            if (int.TryParse(Console.ReadLine(), out int productId))
+            {
+                Console.WriteLine("Enter updated details for the product:");
+
+                Console.Write("New Name: ");
+                var newName = Console.ReadLine();
+
+                Console.Write("New Manufacturer: ");
+                var newManufacturer = Console.ReadLine();
+
+                Console.Write("New Price: ");
+                if (!decimal.TryParse(Console.ReadLine(), out var newPrice) || newPrice < 0)
+                {
+                    Console.WriteLine("Invalid price format. Please enter a valid positive number.");
+                    return;
+                }
+
+                Console.Write("New Category: ");
+                var newCategory = Console.ReadLine();
+
+                var updatedProductModel = new ProductModel
+                {
+                    Name = newName!,
+                    Manufacturer = newManufacturer!,
+                    Price = newPrice,
+                    Category = newCategory!
+                };
+
+                bool updated = await _productService.UpdateProductAsync(productId, updatedProductModel);
+
+                if (updated)
+                {
+                    Console.WriteLine($"Product with ID {productId} successfully updated.");
+                }
+                else
+                {
+                    Console.WriteLine($"Unable to update product with ID {productId}.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a valid numeric ID.");
+            }
         }
     }
 }

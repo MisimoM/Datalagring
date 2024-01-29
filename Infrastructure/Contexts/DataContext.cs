@@ -1,5 +1,10 @@
-﻿using Infrastructure.Entities;
+﻿using Infrastructure.Entities.Album;
+using Infrastructure.Entities.Book;
 using Microsoft.EntityFrameworkCore;
+
+/// <summary>
+/// Context for Code first.
+/// </summary>
 
 namespace Infrastructure.Contexts
 {
