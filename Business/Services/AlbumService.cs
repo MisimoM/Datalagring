@@ -61,10 +61,7 @@ namespace Business.Services
                     return newAlbumEntity;
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
 
             return null!;
         }
@@ -120,10 +117,7 @@ namespace Business.Services
                     return await _albumRepository.UpdateAsync(album => album.Id == albumId, updatedAlbumEntity);
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
 
             return null!;
         }

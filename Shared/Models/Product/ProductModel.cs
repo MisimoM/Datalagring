@@ -8,6 +8,8 @@
         public string Manufacturer { get; set; } = null!;
         public string Category { get; set; } = null!;
 
+        public int InventoryQuantity { get; set; }
+
 
     }
 }

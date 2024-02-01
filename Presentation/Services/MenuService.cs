@@ -44,14 +44,16 @@ namespace Presentation.Services
         {
             while(true)
             {
-                Console.WriteLine("Showing Books");
                 try
                 {
                     var books = await _bookService.GetBooksAsync();
 
+                    Console.Clear();
+                    Console.WriteLine("Showing Books");
+                    Console.WriteLine("");
+
                     if (!books.Any())
                     {
-                        Console.Clear();
                         Console.WriteLine("No books available.");
                     }
 
@@ -60,12 +62,15 @@ namespace Presentation.Services
                         Console.WriteLine($"Id: {book.Id}, Title: {book.Title}, Price: ${book.Price:F0}, Author: {book.Author}, Genre: {book.Genre}");
                     }
 
+                    Console.WriteLine("");
                     Console.WriteLine("Options:");
                     Console.WriteLine("1. Add Book");
                     Console.WriteLine("2. Edit Book");
                     Console.WriteLine("3. Remove Book");
                     Console.WriteLine("4. Go back to Main Menu");
-
+                    Console.WriteLine("");
+                    
+                    Console.Write("Enter your option: ");
                     var option = Console.ReadLine();
 
                     switch (option)
@@ -226,12 +231,14 @@ namespace Presentation.Services
         {
             while (true)
             {
-                Console.WriteLine("Showing Albums");
                 try
                 {
                     var albums = await _albumService.GetAlbumsAsync();
-
+                    
                     Console.Clear();
+                    Console.WriteLine("Showing Albums");
+                    Console.WriteLine("");
+
                     if (!albums.Any())
                     {
                         Console.WriteLine("No albums available.");
@@ -247,12 +254,15 @@ namespace Presentation.Services
                         }
                     }
 
+                    Console.WriteLine("");
                     Console.WriteLine("Options:");
                     Console.WriteLine("1. Add Album");
                     Console.WriteLine("2. Edit Album");
                     Console.WriteLine("3. Remove Album");
-                    Console.WriteLine("3. Go back to Main Menu");
-
+                    Console.WriteLine("4. Go back to Main Menu");
+                    Console.WriteLine("");
+                    
+                    Console.Write("Enter your option: ");
                     var option = Console.ReadLine();
 
                     switch (option)
@@ -429,28 +439,33 @@ namespace Presentation.Services
         {
             while (true)
             {
-                Console.WriteLine("Showing Products");
                 try
                 {
                     var products = await _productService.GetProductsAsync();
-
+                    
+                    Console.Clear();
+                    Console.WriteLine("Showing Products");
+                    Console.WriteLine("");
+                    
                     if (!products.Any())
                     {
-                        Console.Clear();
                         Console.WriteLine("No products available.");
                     }
 
                     foreach (var product in products)
                     {
-                        Console.WriteLine($"Id: {product.Id}, Category: {product.Category} Name: {product.Name}, Price: ${product.Price:F0}, Manufacturer: {product.Manufacturer}");
+                        Console.WriteLine($"Id: {product.Id}, Category: {product.Category} Name: {product.Name}, Price: ${product.Price:F0}, Manufacturer: {product.Manufacturer}, Quantity: {product.InventoryQuantity}");
                     }
 
+                    Console.WriteLine("");
                     Console.WriteLine("Options:");
                     Console.WriteLine("1. Add Product");
                     Console.WriteLine("2. Edit Product");
                     Console.WriteLine("3. Remove Product");
                     Console.WriteLine("4. Go back to Main Menu");
+                    Console.WriteLine("");
 
+                    Console.Write("Enter your option: ");
                     var option = Console.ReadLine();
 
                     switch (option)
@@ -500,12 +515,20 @@ namespace Presentation.Services
                 Console.Write("Category: ");
                 var category = Console.ReadLine();
 
+                Console.Write("Quantity: ");
+                if (!int.TryParse(Console.ReadLine(), out var quantity) || quantity < 0)
+                {
+                    Console.WriteLine("Invalid quantity format.");
+                    return;
+                }
+
                 var newProductModel = new ProductModel
                 {
                     Name = name!,
                     Manufacturer = manufacturer!,
                     Price = price,
-                    Category = category!
+                    Category = category!,
+                    InventoryQuantity = quantity
                 };
 
                 await _productService.CreateProductAsync(newProductModel);
@@ -566,12 +589,20 @@ namespace Presentation.Services
                 Console.Write("New Category: ");
                 var newCategory = Console.ReadLine();
 
+                Console.Write("New Inventory Quantity: ");
+                if (!int.TryParse(Console.ReadLine(), out var newInventoryQuantity) || newInventoryQuantity < 0)
+                {
+                    Console.WriteLine("Invalid inventory quantity format. Please enter a valid positive number.");
+                    return;
+                }
+
                 var updatedProductModel = new ProductModel
                 {
                     Name = newName!,
                     Manufacturer = newManufacturer!,
                     Price = newPrice,
-                    Category = newCategory!
+                    Category = newCategory!,
+                    InventoryQuantity = newInventoryQuantity
                 };
 
                 bool updated = await _productService.UpdateProductAsync(productId, updatedProductModel);

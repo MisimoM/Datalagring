@@ -69,7 +69,7 @@ namespace Business.Services
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
                 
-                return false;
+            return false;
         }
 
         public async Task<bool> UpdateBookAsync(int bookId, BookModel updatedBookModel)
@@ -95,7 +95,8 @@ namespace Business.Services
                 }
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
-                return false;
+                
+            return false;
         }
     }  
 }

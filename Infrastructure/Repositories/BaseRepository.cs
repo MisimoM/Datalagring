@@ -76,18 +76,6 @@ namespace Infrastructure.Repositories
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
             return null!;
         }
-
-        public virtual async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
-        {
-            try
-            {
-                var found = await _dbContext.Set<TEntity>().AnyAsync(predicate);
-                return found;
-            }
-            catch (Exception ex) { Debug.WriteLine(ex.Message); }
-            return false!;
-        }
-
         public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)
         {
             try

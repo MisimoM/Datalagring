@@ -14,6 +14,7 @@ namespace Infrastructure.Repositories.Product
                 var entities = await _dbContext.Set<ProductEntity>()
                     .Include(product => product.Category)
                     .Include(product => product.Manufacturer)
+                    .Include(product => product.Inventories)
                     .ToListAsync();
 
                 return entities;

@@ -29,8 +29,9 @@ var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
     services.AddScoped<CategoryRepository>();
     services.AddScoped<InventoryRepository>();
     services.AddScoped<ProductService>();
+    services.AddScoped<InventoryService>();
 
-    services.AddScoped<MenuService>();
+    services.AddTransient<MenuService>();
 
 }).Build();
 

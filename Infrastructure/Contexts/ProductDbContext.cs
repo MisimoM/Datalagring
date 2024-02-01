@@ -48,7 +48,7 @@ public partial class ProductDbContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.Inventories)
                 .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__Inventory__Produ__49C3F6B7");
         });
 

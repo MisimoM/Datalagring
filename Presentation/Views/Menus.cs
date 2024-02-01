@@ -5,7 +5,7 @@
         public static void MainMenu()
         {
             Console.Clear();
-            Console.WriteLine("Books and Albums and Random Products");
+            Console.WriteLine("Books, Albums and Random Products");
             Console.WriteLine("");
             Console.WriteLine("1. Show Books");
             Console.WriteLine("2. Show Albums");

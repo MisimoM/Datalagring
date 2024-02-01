@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Entities.Product;
-using Infrastructure.Repositories.Book;
 using Infrastructure.Repositories.Product;
 using Shared.Models.Product;
 using System.Diagnostics;
@@ -10,27 +9,38 @@ namespace Business.Services
         ProductRepository productRepository,
         CategoryRepository categoryRepository,
         ManufacturerRepository manufacturerRepository,
-        InventoryRepository inventoryRepository)
+        InventoryRepository inventoryRepository,
+        InventoryService inventoryService)
     {
         private readonly ProductRepository _productRepository = productRepository;
         private readonly CategoryRepository _categoryRepository = categoryRepository;
         private readonly ManufacturerRepository _manufacturerRepository = manufacturerRepository;
         private readonly InventoryRepository _inventoryRepository = inventoryRepository;
+        private readonly InventoryService _inventoryService = inventoryService;
 
         public async Task<IEnumerable<ProductModel>> GetProductsAsync()
         {
-            var productEntites = await _productRepository.GetAllAsync();
+            var productEntities = await _productRepository.GetAllAsync();
+            var productModels = new List<ProductModel>();
 
-            var productModels = productEntites.Select(productEntity => new ProductModel
+            foreach (var productEntity in productEntities)
             {
-                Id = productEntity.Id,
-                Name = productEntity.Name,
-                Price = productEntity.Price,
-                Manufacturer = productEntity.Manufacturer.Name,
-                Category = productEntity.Category.Name
-            });
+                var inventoryQuantity = await _inventoryService.GetInventoryQuantityAsync(productEntity.Id);
 
-            return productModels;
+                var productModel = new ProductModel
+                {
+                    Id = productEntity.Id,
+                    Name = productEntity.Name,
+                    Price = productEntity.Price,
+                    Manufacturer = productEntity.Manufacturer.Name,
+                    Category = productEntity.Category.Name,
+                    InventoryQuantity = inventoryQuantity
+                };
+
+                productModels.Add(productModel);
+            }
+
+            return productModels.AsEnumerable();
         }
 
         public async Task<ProductEntity> CreateProductAsync(ProductModel productModel)
@@ -48,10 +58,18 @@ namespace Business.Services
                     Name = productModel.Name,
                     Price = productModel.Price,
                     CategoryId = categoryEntity.Id,
-                    ManufacturerId = manufacturerEntity.Id
+                    ManufacturerId = manufacturerEntity.Id,
                 };
 
                 var newProductEntity = await _productRepository.AddAsync(productEntity);
+
+                var inventoryEntity = new InventoryEntity
+                {
+                    Quantity = productModel.InventoryQuantity,
+                    ProductId = newProductEntity.Id
+                };
+
+                await _inventoryRepository.AddAsync(inventoryEntity);
 
                 if (newProductEntity != null)
                 {
@@ -98,12 +116,24 @@ namespace Business.Services
                                       await _categoryRepository.AddAsync(new CategoryEntity { Name = updatedProductModel.Category });
                     existingProductEntity.CategoryId = categoryEntity.Id;
 
-                    return await _productRepository.UpdateAsync(product => product.Id == productId, existingProductEntity) != null;
+                    var updatedProduct = await _productRepository.UpdateAsync(product => product.Id == productId, existingProductEntity);
+
+                    if (updatedProduct != null)
+                    {
+                        var inventoryEntity = await _inventoryRepository.GetAsync(inventory => inventory.ProductId == productId);
+                        if (inventoryEntity != null)
+                        {
+                            inventoryEntity.Quantity = updatedProductModel.InventoryQuantity;
+                            await _inventoryRepository.UpdateAsync(inventory => inventory.ProductId == productId, inventoryEntity);
+                        }
+
+                        return true;
+                    }
                 }
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            
             return false;
         }
     }
-
 }
