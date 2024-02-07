@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Infrastructure.Repositories.Album
 {
-    public class AlbumRepository(DataContext dbContext) : BaseRepository<AlbumEntity>(dbContext)
+    public class AlbumRepository(DataContext dbContext) : BaseRepository<AlbumEntity, DataContext>(dbContext)
     {
         public override async Task<IEnumerable<AlbumEntity>> GetAllAsync()
         {

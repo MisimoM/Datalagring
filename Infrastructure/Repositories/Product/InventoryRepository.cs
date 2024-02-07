@@ -3,7 +3,7 @@ using Infrastructure.Entities.Product;
 
 namespace Infrastructure.Repositories.Product
 {
-    public class InventoryRepository(ProductDbContext dbContext) : ProductBaseRepository<InventoryEntity>(dbContext)
+    public class InventoryRepository(ProductDbContext dbContext) : BaseRepository<InventoryEntity, ProductDbContext>(dbContext)
     {
     }
 }

@@ -1,5 +1,4 @@
 ﻿namespace Infrastructure.Entities.Product;
-
 public partial class ManufacturerEntity
 {
     public int Id { get; set; }

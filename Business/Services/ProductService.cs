@@ -7,15 +7,13 @@ namespace Business.Services
 {
     public class ProductService(
         ProductRepository productRepository,
-        CategoryRepository categoryRepository,
-        ManufacturerRepository manufacturerRepository,
-        InventoryRepository inventoryRepository,
+        CategoryService categoryService,
+        ManufacturerService manufacturerService,
         InventoryService inventoryService)
     {
         private readonly ProductRepository _productRepository = productRepository;
-        private readonly CategoryRepository _categoryRepository = categoryRepository;
-        private readonly ManufacturerRepository _manufacturerRepository = manufacturerRepository;
-        private readonly InventoryRepository _inventoryRepository = inventoryRepository;
+        private readonly CategoryService _categoryService = categoryService;
+        private readonly ManufacturerService _manufacturerService = manufacturerService;
         private readonly InventoryService _inventoryService = inventoryService;
 
         public async Task<IEnumerable<ProductModel>> GetProductsAsync()
@@ -47,11 +45,9 @@ namespace Business.Services
         {
             try
             {
-                var categoryEntity = await _categoryRepository.GetAsync(category => category.Name == productModel.Category) ??
-                           await _categoryRepository.AddAsync(new CategoryEntity { Name = productModel.Category });
+                var categoryEntity = await _categoryService.GetOrCreateCategoryAsync(productModel.Category);
 
-                var manufacturerEntity = await _manufacturerRepository.GetAsync(manufacturer => manufacturer.Name == productModel.Manufacturer) ??
-                                  await _manufacturerRepository.AddAsync(new ManufacturerEntity { Name = productModel.Manufacturer });
+                var manufacturerEntity = await _manufacturerService.GetOrCreateManufacturerAsync(productModel.Manufacturer);
 
                 var productEntity = new ProductEntity
                 {
@@ -63,13 +59,7 @@ namespace Business.Services
 
                 var newProductEntity = await _productRepository.AddAsync(productEntity);
 
-                var inventoryEntity = new InventoryEntity
-                {
-                    Quantity = productModel.InventoryQuantity,
-                    ProductId = newProductEntity.Id
-                };
-
-                await _inventoryRepository.AddAsync(inventoryEntity);
+                await _inventoryService.CreateInventoryAsync(newProductEntity.Id, productModel.InventoryQuantity);
 
                 if (newProductEntity != null)
                 {
@@ -108,24 +98,17 @@ namespace Business.Services
                     existingProductEntity.Name = updatedProductModel.Name;
                     existingProductEntity.Price = updatedProductModel.Price;
 
-                    var manufacturerEntity = await _manufacturerRepository.GetAsync(manufacturer => manufacturer.Name == updatedProductModel.Manufacturer) ??
-                                       await _manufacturerRepository.AddAsync(new ManufacturerEntity { Name = updatedProductModel.Manufacturer });
+                    var manufacturerEntity = await _manufacturerService.GetOrCreateManufacturerAsync(updatedProductModel.Manufacturer);
                     existingProductEntity.ManufacturerId = manufacturerEntity.Id;
 
-                    var categoryEntity = await _categoryRepository.GetAsync(category => category.Name == updatedProductModel.Category) ??
-                                      await _categoryRepository.AddAsync(new CategoryEntity { Name = updatedProductModel.Category });
+                    var categoryEntity = await _categoryService.GetOrCreateCategoryAsync(updatedProductModel.Category);
                     existingProductEntity.CategoryId = categoryEntity.Id;
 
                     var updatedProduct = await _productRepository.UpdateAsync(product => product.Id == productId, existingProductEntity);
 
                     if (updatedProduct != null)
                     {
-                        var inventoryEntity = await _inventoryRepository.GetAsync(inventory => inventory.ProductId == productId);
-                        if (inventoryEntity != null)
-                        {
-                            inventoryEntity.Quantity = updatedProductModel.InventoryQuantity;
-                            await _inventoryRepository.UpdateAsync(inventory => inventory.ProductId == productId, inventoryEntity);
-                        }
+                        await _inventoryService.UpdateInventoryQuantityAsync(productId, updatedProductModel.InventoryQuantity);
 
                         return true;
                     }

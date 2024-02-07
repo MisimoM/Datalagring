@@ -1,5 +1,4 @@
 ﻿namespace Infrastructure.Entities.Product;
-
 public partial class ProductEntity
 {
     public int Id { get; set; }

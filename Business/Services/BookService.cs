@@ -5,11 +5,11 @@ using System.Diagnostics;
 
 namespace Business.Services
 {
-    public class BookService(BookRepository bookRepository, AuthorRepository authorRepository, GenreRepository genreRepository)
+    public class BookService(BookRepository bookRepository, AuthorService authorService, GenreService genreService)
     {
         private readonly BookRepository _bookRepository = bookRepository;
-        private readonly AuthorRepository _authorRepository = authorRepository;
-        private readonly GenreRepository _genreRepository = genreRepository;
+        private readonly AuthorService _authorService = authorService;
+        private readonly GenreService _genreService = genreService;
         public async Task<IEnumerable<BookModel>> GetBooksAsync()
         {
             var bookEntities = await _bookRepository.GetAllAsync();
@@ -30,11 +30,9 @@ namespace Business.Services
         {
             try
             {
-                var authorEntity = await _authorRepository.GetAsync(author => author.Name == bookModel.Author) ??
-                           await _authorRepository.AddAsync(new AuthorEntity { Name = bookModel.Author });
+                var authorEntity = await _authorService.GetOrCreateAuthorAsync(bookModel.Author);
 
-                var genreEntity = await _genreRepository.GetAsync(genre => genre.Name == bookModel.Genre) ??
-                                  await _genreRepository.AddAsync(new GenreEntity { Name = bookModel.Genre });
+                var genreEntity = await _genreService.GetOrCreateGenreAsync(bookModel.Genre);
 
                 var bookEntity = new BookEntity
                 {
@@ -83,19 +81,17 @@ namespace Business.Services
                     existingBookEntity.Title = updatedBookModel.Title;
                     existingBookEntity.Price = updatedBookModel.Price;
 
-                    var authorEntity = await _authorRepository.GetAsync(author => author.Name == updatedBookModel.Author) ??
-                                       await _authorRepository.AddAsync(new AuthorEntity { Name = updatedBookModel.Author });
+                    var authorEntity = await _authorService.GetOrCreateAuthorAsync(updatedBookModel.Author);
                     existingBookEntity.AuthorId = authorEntity.Id;
 
-                    var genreEntity = await _genreRepository.GetAsync(genre => genre.Name == updatedBookModel.Genre) ??
-                                      await _genreRepository.AddAsync(new GenreEntity { Name = updatedBookModel.Genre });
+                    var genreEntity = await _genreService.GetOrCreateGenreAsync(updatedBookModel.Genre);
                     existingBookEntity.GenreId = genreEntity.Id;
 
                     return await _bookRepository.UpdateAsync(book => book.Id == bookId, existingBookEntity) != null;
                 }
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
-                
+
             return false;
         }
     }  

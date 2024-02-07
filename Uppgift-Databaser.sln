@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{904E7CCD-FCE4-48BF-A713-5C85207AE083}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{BB18E332-B67A-4024-A3CE-C97298D1BB5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{BB18E332-B67A-4024-A3CE-C97298D1BB5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Tests", "Infrastructure.Tests\Infrastructure.Tests.csproj", "{B622E560-4B8D-46B6-9276-A62B91503683}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business.Tests", "Business.Tests\Business.Tests.csproj", "{5C73236E-C120-4992-9B9C-5A50CECDD355}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{BB18E332-B67A-4024-A3CE-C97298D1BB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB18E332-B67A-4024-A3CE-C97298D1BB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB18E332-B67A-4024-A3CE-C97298D1BB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B622E560-4B8D-46B6-9276-A62B91503683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B622E560-4B8D-46B6-9276-A62B91503683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B622E560-4B8D-46B6-9276-A62B91503683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B622E560-4B8D-46B6-9276-A62B91503683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C73236E-C120-4992-9B9C-5A50CECDD355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C73236E-C120-4992-9B9C-5A50CECDD355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C73236E-C120-4992-9B9C-5A50CECDD355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C73236E-C120-4992-9B9C-5A50CECDD355}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

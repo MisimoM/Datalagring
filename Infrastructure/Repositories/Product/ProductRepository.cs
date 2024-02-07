@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Infrastructure.Repositories.Product
 {
-    public class ProductRepository(ProductDbContext dbContext) : ProductBaseRepository<ProductEntity>(dbContext)
+    public class ProductRepository(ProductDbContext dbContext) : BaseRepository<ProductEntity, ProductDbContext>(dbContext)
     {
         public override async Task<IEnumerable<ProductEntity>> GetAllAsync()
         {

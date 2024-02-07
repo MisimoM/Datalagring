@@ -3,7 +3,7 @@ using Infrastructure.Entities.Book;
 
 namespace Infrastructure.Repositories.Book
 {
-    public class AuthorRepository(DataContext dbContext) : BaseRepository<AuthorEntity>(dbContext)
+    public class AuthorRepository(DataContext dbContext) : BaseRepository<AuthorEntity, DataContext>(dbContext)
     {
     }
 }

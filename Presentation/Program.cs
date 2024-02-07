@@ -17,19 +17,28 @@ var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
     services.AddScoped<BookRepository>();
     services.AddScoped<AuthorRepository>();
     services.AddScoped<GenreRepository>();
+    
     services.AddScoped<BookService>();
+    services.AddScoped<AuthorService>();
+    services.AddScoped<GenreService>();
 
     services.AddScoped<ArtistRepository>();
     services.AddScoped<AlbumRepository>();
     services.AddScoped<TrackRepository>();
+    
     services.AddScoped<AlbumService>();
+    services.AddScoped<ArtistService>();
+    services.AddScoped<TrackService>();
 
     services.AddScoped<ProductRepository>();
     services.AddScoped<ManufacturerRepository>();
     services.AddScoped<CategoryRepository>();
     services.AddScoped<InventoryRepository>();
+
     services.AddScoped<ProductService>();
     services.AddScoped<InventoryService>();
+    services.AddScoped<ManufacturerService>();
+    services.AddScoped<CategoryService>();
 
     services.AddTransient<MenuService>();
 
@@ -39,8 +48,3 @@ builder.Start();
 
 var menuService = builder.Services.GetRequiredService<MenuService>();
 await menuService.ShowMainMenu();
-
-
-
-
-//@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Marko\Desktop\Projects\Education\DataBase\Uppgift-Databaser\Infrastructure\Data\local_database.mdf;Integrated Security=True;Connect Timeout=30;Encrypt=True"

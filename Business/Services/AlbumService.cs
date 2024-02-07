@@ -5,11 +5,11 @@ using System.Diagnostics;
 
 namespace Business.Services
 {
-    public class AlbumService(AlbumRepository albumRepository, TrackRepository trackRepository, ArtistRepository artistRepository)
+    public class AlbumService(AlbumRepository albumRepository, TrackService trackService, ArtistService artistService)
     {
         private readonly AlbumRepository _albumRepository = albumRepository;
-        private readonly TrackRepository _trackRepository = trackRepository;
-        private readonly ArtistRepository _artistRepository = artistRepository;
+        private readonly TrackService _trackService = trackService;
+        private readonly ArtistService _artistService = artistService;
 
         public async Task<IEnumerable<AlbumModel>> GetAlbumsAsync()
         {
@@ -33,8 +33,7 @@ namespace Business.Services
         {
             try
             {
-                var artistEntity = await _artistRepository.GetAsync(artist => artist.Name == albumModel.Artist) ??
-                                   await _artistRepository.AddAsync(new ArtistEntity { Name = albumModel.Artist });
+                var artistEntity = await _artistService.GetOrCreateArtistAsync(albumModel.Artist);
 
                 var albumEntity = new AlbumEntity
                 {
@@ -47,16 +46,7 @@ namespace Business.Services
 
                 if (newAlbumEntity != null)
                 {
-                    foreach (var trackModel in trackModels)
-                    {
-                        var trackEntity = new TrackEntity
-                        {
-                            Title = trackModel.Title,
-                            AlbumId = newAlbumEntity.Id
-                        };
-
-                        await _trackRepository.AddAsync(trackEntity);
-                    }
+                    await _trackService.CreateTracksAsync(newAlbumEntity.Id, trackModels);
 
                     return newAlbumEntity;
                 }
@@ -93,28 +83,14 @@ namespace Business.Services
                     existingAlbumEntity.Title = updatedAlbumModel.Title;
                     existingAlbumEntity.Price = updatedAlbumModel.Price;
 
-                    var artistEntity = await _artistRepository.GetAsync(artist => artist.Name == updatedAlbumModel.Artist) ??
-                                       await _artistRepository.AddAsync(new ArtistEntity { Name = updatedAlbumModel.Artist });
-
+                    var artistEntity = await _artistService.GetOrCreateArtistAsync(updatedAlbumModel.Artist);
                     existingAlbumEntity.Artist = artistEntity;
 
                     var updatedAlbumEntity = await _albumRepository.UpdateAsync(album => album.Id == albumId, existingAlbumEntity);
 
-                    existingAlbumEntity.Tracks.Clear();
+                    await _trackService.UpdateTracksAsync(albumId, updatedTrackModels);
 
-                    foreach (var updatedTrackModel in updatedTrackModels)
-                    {
-                        var newTrackEntity = new TrackEntity
-                        {
-                            Title = updatedTrackModel.Title,
-                            AlbumId = existingAlbumEntity.Id
-                        };
-
-                        await _trackRepository.AddAsync(newTrackEntity);
-                        updatedAlbumEntity.Tracks.Add(newTrackEntity);
-                    }
-
-                    return await _albumRepository.UpdateAsync(album => album.Id == albumId, updatedAlbumEntity);
+                    return updatedAlbumEntity;
                 }
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }

@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Infrastructure.Repositories.Book
 {
-    public class BookRepository(DataContext dbContext) : BaseRepository<BookEntity>(dbContext)
+    public class BookRepository(DataContext dbContext) : BaseRepository<BookEntity, DataContext>(dbContext)
     {
         public override async Task<IEnumerable<BookEntity>> GetAllAsync()
         {
