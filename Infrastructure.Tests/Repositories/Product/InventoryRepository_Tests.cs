@@ -61,10 +61,10 @@ namespace Infrastructure.Tests.Repositories.Product
 
             // Act
             var result = await _repository.DeleteAsync(i => i.Id == inventory.Id);
+            var deletedInventory = await _repository.GetAsync(i => i.Id == inventory.Id);
 
             // Assert
             Assert.True(result);
-            var deletedInventory = await _repository.GetAsync(i => i.Id == inventory.Id);
             Assert.Null(deletedInventory);
         }
 

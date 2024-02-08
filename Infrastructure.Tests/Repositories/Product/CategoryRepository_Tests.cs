@@ -45,14 +45,15 @@ namespace Infrastructure.Tests.Repositories.Product
             {
                 Name = "Category Test"
             };
+
             await _repository.AddAsync(category);
 
             // Act
             var result = await _repository.DeleteAsync(c => c.Id == category.Id);
+            var deletedCategory = await _repository.GetAsync(c => c.Id == category.Id);
 
             // Assert
             Assert.True(result);
-            var deletedCategory = await _repository.GetAsync(c => c.Id == category.Id);
             Assert.Null(deletedCategory);
         }
 
@@ -88,6 +89,7 @@ namespace Infrastructure.Tests.Repositories.Product
             {
                 Name = "Category Test"
             };
+
             await _repository.AddAsync(category);
 
             // Act

@@ -45,14 +45,15 @@ namespace Infrastructure.Tests.Repositories.Book
             {
                 Name = "Author Test"
             };
+
             await _repository.AddAsync(author);
 
             // Act
             var result = await _repository.DeleteAsync(a => a.Id == author.Id);
-
+            var deletedAuthor = await _repository.GetAsync(a => a.Id == author.Id);
+            
             // Assert
             Assert.True(result);
-            var deletedAuthor = await _repository.GetAsync(a => a.Id == author.Id);
             Assert.Null(deletedAuthor);
         }
 
@@ -88,6 +89,7 @@ namespace Infrastructure.Tests.Repositories.Book
             {
                 Name = "Author Test"
             };
+
             await _repository.AddAsync(author);
 
             // Act

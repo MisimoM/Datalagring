@@ -15,6 +15,7 @@ namespace Infrastructure.Tests.Repositories.Product
             _context = new ProductDbContext(new DbContextOptionsBuilder<ProductDbContext>()
                 .UseInMemoryDatabase($"{Guid.NewGuid()}")
                 .Options);
+
             _repository = new ManufacturerRepository(_context);
         }
 
@@ -45,14 +46,15 @@ namespace Infrastructure.Tests.Repositories.Product
             {
                 Name = "Manufacturer Test"
             };
+
             await _repository.AddAsync(manufacturer);
 
             // Act
             var result = await _repository.DeleteAsync(m => m.Id == manufacturer.Id);
+            var deletedManufacturer = await _repository.GetAsync(m => m.Id == manufacturer.Id);
 
             // Assert
             Assert.True(result);
-            var deletedManufacturer = await _repository.GetAsync(m => m.Id == manufacturer.Id);
             Assert.Null(deletedManufacturer);
         }
 
@@ -88,6 +90,7 @@ namespace Infrastructure.Tests.Repositories.Product
             {
                 Name = "Manufacturer Test"
             };
+
             await _repository.AddAsync(manufacturer);
 
             // Act

@@ -50,10 +50,10 @@ namespace Infrastructure.Tests.Repositories.Book
 
             // Act
             var result = await _repository.DeleteAsync(g => g.Id == genre.Id);
+            var deletedGenre = await _repository.GetAsync(g => g.Id == genre.Id);
 
             // Assert
             Assert.True(result);
-            var deletedGenre = await _repository.GetAsync(g => g.Id == genre.Id);
             Assert.Null(deletedGenre);
         }
 

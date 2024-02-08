@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Infrastructure.Repositories.Album;
 using Infrastructure.Repositories.Book;
 using Infrastructure.Repositories.Product;
+using Presentation.Managers;
 
 var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
 {
@@ -40,11 +41,14 @@ var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
     services.AddScoped<ManufacturerService>();
     services.AddScoped<CategoryService>();
 
-    services.AddTransient<MenuService>();
+    services.AddScoped<BookManager>();
+    services.AddScoped<AlbumManager>();
+    services.AddScoped<ProductManager>();
+    services.AddScoped<MenuService>();
 
 }).Build();
 
 builder.Start();
 
 var menuService = builder.Services.GetRequiredService<MenuService>();
-await menuService.ShowMainMenu();
+await menuService.MainMenu();

@@ -63,10 +63,10 @@ namespace Infrastructure.Tests.Repositories.Album
 
             // Act
             var result = await _repository.DeleteAsync(t => t.Id == track.Id);
+            var deletedTrack = await _repository.GetAsync(t => t.Id == track.Id);
 
             // Assert
             Assert.True(result);
-            var deletedTrack = await _repository.GetAsync(t => t.Id == track.Id);
             Assert.Null(deletedTrack);
         }
 
