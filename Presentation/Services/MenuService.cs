@@ -19,6 +19,7 @@ namespace Presentation.Services
                 Console.WriteLine("2. Show Albums");
                 Console.WriteLine("3. Show Products");
                 Console.WriteLine("4. Exit the shop");
+                Console.WriteLine("");
 
                 Console.Write("Enter your choice: ");
                 string? userInput = Console.ReadLine();
@@ -32,7 +33,7 @@ namespace Presentation.Services
                         await AlbumsMenu();
                         break;
                     case "3":
-                        await ShowProductsMenu();
+                        await ProductsMenu();
                         break;
                     case "4":
                         Console.WriteLine("Exiting the shop...");
@@ -48,41 +49,44 @@ namespace Presentation.Services
 
         public async Task BookMenu()
         {
-            try
+            while (true)
             {
-                await _bookManager.ShowAllBooks();
-
-                Console.WriteLine("");
-                Console.WriteLine("Options:");
-                Console.WriteLine("1. Add Book");
-                Console.WriteLine("2. Edit Book");
-                Console.WriteLine("3. Remove Book");
-                Console.WriteLine("4. Go back to Main Menu");
-                Console.WriteLine("");
-
-                Console.Write("Enter your option: ");
-                var userInput = Console.ReadLine();
-
-                switch (userInput)
+                try
                 {
-                    case "1":
-                        await _bookManager.AddBook();
-                        break;
-                    case "2":
-                        await _bookManager.UpdateBook();
-                        break;
-                    case "3":
-                        await _bookManager.RemoveBook();
-                        break;
-                    case "4":
-                        await MainMenu();
-                        break;
-                    default:
-                        Console.WriteLine("Invalid option");
-                        break;
+                    await _bookManager.ShowAllBooks();
+
+                    Console.WriteLine("");
+                    Console.WriteLine("Options:");
+                    Console.WriteLine("1. Add Book");
+                    Console.WriteLine("2. Edit Book");
+                    Console.WriteLine("3. Remove Book");
+                    Console.WriteLine("4. Go back to Main Menu");
+                    Console.WriteLine("");
+
+                    Console.Write("Enter your option: ");
+                    var userInput = Console.ReadLine();
+
+                    switch (userInput)
+                    {
+                        case "1":
+                            await _bookManager.AddBook();
+                            break;
+                        case "2":
+                            await _bookManager.UpdateBook();
+                            break;
+                        case "3":
+                            await _bookManager.RemoveBook();
+                            break;
+                        case "4":
+                            await MainMenu();
+                            break;
+                        default:
+                            Console.WriteLine("Invalid option");
+                            break;
+                    }
                 }
+                catch (Exception ex) { Debug.WriteLine(ex.Message); }
             }
-            catch (Exception ex) { Debug.WriteLine(ex.Message); }
         }
 
         private async Task AlbumsMenu()
@@ -126,7 +130,7 @@ namespace Presentation.Services
                 catch (Exception ex) { Debug.WriteLine(ex.Message); }
             }
         }
-        public async Task ShowProductsMenu()
+        public async Task ProductsMenu()
         {
             while (true)
             {

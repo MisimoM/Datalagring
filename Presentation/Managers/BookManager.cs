@@ -26,6 +26,7 @@ namespace Presentation.Managers
                 foreach (var book in books)
                 {
                     Console.WriteLine($"Id: {book.Id}, Title: {book.Title}, Price: ${book.Price:F0}, Author: {book.Author}, Genre: {book.Genre}");
+                    Console.WriteLine("");
                 }
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }

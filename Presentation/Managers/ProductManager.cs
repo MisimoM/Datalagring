@@ -25,7 +25,8 @@ namespace Presentation.Managers
 
                 foreach (var product in products)
                 {
-                    Console.WriteLine($"Id: {product.Id}, Category: {product.Category} Name: {product.Name}, Price: ${product.Price:F0}, Manufacturer: {product.Manufacturer}, Quantity: {product.InventoryQuantity}");
+                    Console.WriteLine($"Id: {product.Id}, Category: {product.Category}, Name: {product.Name}, Price: ${product.Price:F0}, Manufacturer: {product.Manufacturer}, Quantity: {product.InventoryQuantity}");
+                    Console.WriteLine("");
                 }
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }

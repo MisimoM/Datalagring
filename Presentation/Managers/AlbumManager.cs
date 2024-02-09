@@ -25,12 +25,13 @@ namespace Presentation.Managers
 
                 foreach (var album in albums)
                 {
-                    Console.WriteLine($"Id: {album.Id}, Title: {album.Title}, Artist: {album.Artist} Price: ${album.Price:F0}");
+                    Console.WriteLine($"Id: {album.Id}, Title: {album.Title}, Artist: {album.Artist}, Price: ${album.Price:F0}");
                     Console.WriteLine("Tracks:");
                     foreach (var track in album.Tracks)
                     {
-                        Console.WriteLine($"Title: {track.Title}");
+                        Console.WriteLine($"{track.Title}");
                     }
+                    Console.WriteLine("");
                 }
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
